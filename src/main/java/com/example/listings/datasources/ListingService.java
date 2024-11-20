@@ -1,10 +1,13 @@
 package com.example.listings.datasources;
 
 import com.example.listings.generated.types.Amenity;
+import com.example.listings.generated.types.CreateListingInput;
+import com.example.listings.models.CreateListingModel;
 import com.example.listings.models.ListingModel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -52,5 +55,15 @@ public class ListingService
         }
 
         return null;
+    }
+
+    public ListingModel createListingRequest(CreateListingInput listing)
+    {
+        MappingJacksonValue serializedListing = new MappingJacksonValue(new CreateListingModel(listing));
+        return client.post()
+                .uri("/listings")
+                .body(serializedListing)
+                .retrieve()
+                .body(ListingModel.class);
     }
 }
